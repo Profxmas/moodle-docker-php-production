@@ -220,7 +220,10 @@ EOF
 MAX_BUFFER_SIZE=$(awk "BEGIN {print int($FASTCGI_BUFFER * 2)}")
 # Nginx Config
 echo "    -> Generating Nginx config..."
-cat <<EOF > /etc/nginx/nginx.conf
+if [ ! -f /etc/nginx/token.txt ]; then
+    # If the token.txt file does not exist, we create it and generate  nginx.conf
+    touch /etc/nginx/token.txt
+    cat <<EOF > /etc/nginx/nginx.conf
 user www-data;
 worker_processes auto;
 pid /var/run/nginx.pid;
@@ -317,7 +320,9 @@ http {
     }
 }
 EOF
-
+else
+    echo ">>> nginx.conf already exists. Skipping generation."
+fi
 
 echo ">>> Starting Container (Optimization Mode: $CODE_STATUS)..."
 # ----------------------------------------------------------------------
@@ -448,10 +453,13 @@ cp -a "$CODE_CACHE_DIR/." "$MOODLE_DIR/"
 rm -rf "$MOODLE_DIR/.git"
 
 # ----------------------------------------------------------------------
-# 3. Generate Config.php (Always Fresh)
+# 3. Generate Config.php (Always Fresh, most of the time)
 # ----------------------------------------------------------------------
 echo ">>> Generating config.php..."
-cat <<'EOF' > "$MOODLE_DIR/config.php"
+if [ ! -f "$MOODLE_DIR/token.txt" ]; then
+    # If the token.txt file does not exist, we create it and generate config.php
+    touch "$MOODLE_DIR/token.txt"
+    cat <<'EOF' > "$MOODLE_DIR/config.php"
 <?php
 unset($CFG);
 global $CFG;
@@ -488,6 +496,9 @@ $CFG->xsendfilealiases = array(
 );
 
 EOF
+else
+    echo ">>> Config.php already exists. Skipping generation."
+fi
 
 if [ ! -z "$MOODLE_EXTRA_PHP" ]; then echo "$MOODLE_EXTRA_PHP" >> "$MOODLE_DIR/config.php"; fi
 echo "require_once(__DIR__ . '/lib/setup.php');" >> "$MOODLE_DIR/config.php"
