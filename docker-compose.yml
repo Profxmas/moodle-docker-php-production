@@ -53,14 +53,14 @@ services:
       PLUGIN_CODE_STATUS: update
       SITE_CODE_STATUS: update
       SERVER_MEMORY_USAGE_PERCENT: 20
-MOODLE_PLUGINS_JSON: |
-  [
-    {
-      "giturl": "https://github.com/davosmith/moodle-checklist.git",
-      "branch": "master",
-      "installpath": "mod/checklist"
-    }
-  ]
+      MOODLE_PLUGINS_JSON: |
+        [
+          {
+            "giturl": "https://github.com/davosmith/moodle-checklist.git",
+            "branch": "master",
+            "installpath": "mod/checklist"
+          }
+        ]
       # 🔥 MEMCACHED + SESSION HANDLER
       MOODLE_EXTRA_PHP: |
         $$CFG->debug = 32767;
