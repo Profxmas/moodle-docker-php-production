@@ -15,7 +15,7 @@ RUN apk add --no-cache \
     libzip icu-libs libxml2 \
     libpq mariadb-connector-c-dev \
     libxslt libsodium zlib \
-    libmemcached-libs libevent
+    libmemcached-libs libevent nano
 
 # 2. Build das Extensões (Instala > Compila > Remove Lixo)
 RUN apk add --no-cache --virtual .build-deps \
